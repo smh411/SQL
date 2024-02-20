@@ -820,59 +820,79 @@ INSERT INTO pokemon(Number,Name,Type_1,Type_2,Total,HP,Attack,Defense,Sp_Atk,Sp_
 SELECT COUNT(DISTINCT Type_1) from pokemon;
 
 /**calculate number of pokemon by 1st fighting type**/
-SELECT Type_1 AS Fighting_Type, 
-COUNT(Type_1) AS Quantity 
+SELECT Type_1 AS Fighting_Type
+, COUNT(Type_1) AS Quantity 
 FROM pokemon
 GROUP BY Type_1;
 
 /**calculate number of pokemon by 1st and 2nd fighting type**/
-SELECT Type_1,COUNT(Type_1), Type_2, COUNT(Type_2)
+SELECT Type_1,COUNT(Type_1)
+, Type_2
+, COUNT(Type_2)
 FROM pokemon
 GROUP BY Type_1;
 
 /**count number pokemon with flying as first type**/
-SELECT Number, Name, Type_1 FROM pokemon
+SELECT Number
+, Name
+, Type_1 FROM pokemon
 WHERE Type_1 = "Flying";
 
 /**count number pokemon with flying as first or second type**/
-SELECT Number, Name, Type_1, Type_2 from pokemon
+SELECT Number
+, Name
+, Type_1
+, Type_2 from pokemon
 WHERE Type_1 = "Flying" OR Type_2 = "Flying"
 ORDER BY Number;
 
 /**select fire type pokemon**/
-SELECT Number, Name from pokemon
+SELECT Number
+, Name from pokemon
 WHERE Type_1 OR Type_2 = "Fire";
 
 /**Who has the highest HP?**/
-SELECT Type_1, Name, MAX (HP) 
+SELECT Type_1
+, Name, MAX (HP) 
 FROM pokemon;
 
 /**What are the pokemon with the highest HP from each fighting type?**/
-SELECT Type_1, Name, MAX (HP) 
+SELECT Type_1
+, Name
+, MAX (HP) 
 FROM pokemon
 GROUP BY Type_1;
 
 /**What is the average HP by fighting type 1?, display only those with Average HP > 70**/
-SELECT Type_1, AVG(HP) from pokemon
+SELECT Type_1
+, AVG(HP) from pokemon
 GROUP BY Type_1
 HAVING AVG(HP) > 70
 ORDER BY HP DESC;
 
 /**What are the legendary pokemon with the highest HP from each fighting type?**/
-SELECT Type_1, Name, MAX (HP) 
+SELECT Type_1
+, Name
+, MAX (HP) 
 FROM pokemon
 WHERE legendary = "True"
 GROUP BY Type_1;
 
 /**what's the fastest pokemon?**/
-SELECT Name, MAX(Speed) from pokemon;
+SELECT Name
+, MAX(Speed)
+from pokemon;
 
 /**what's the fastest pokemon in each fighting type?**/
-SELECT Name, MAX(Speed) from pokemon
+SELECT Name
+, MAX(Speed) from pokemon
 GROUP BY Type_1;
 
 /**What are the fastest pokemon within HP groups**/
-SELECT Name, MAX(Speed), HP,
+SELECT Name
+, MAX(Speed)
+, HP
+,
 CASE
   WHEN HP >160 then "best"
   WHEN HP > 140 then "very good"
