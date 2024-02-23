@@ -1,0 +1,171 @@
+/* Analysis of Fleetwood Mac, their 1977 album <i> Rumours </i>, and their inter-band relationships */
+
+--Fleetwood Mac members on Rumours
+CREATE TABLE fm_77
+(id INTEGER PRIMARY KEY
+	, first_name TEXT
+	, last_name TEXT
+	, nationality TEXT)
+  ;
+
+INSERT INTO fm_77 
+VALUES
+
+  (1, "Lindsey", "Buckingham", "US")
+, (2, "Mick", "Fleetwood", "UK")
+, (3, "Christine", "McVie", "UK")
+, (4, "John", "McVie", "UK")
+, (5, "Stevie", "Nicks", "US")
+;
+
+--List of Rumours tracks
+CREATE TABLE rumours 
+(id INTEGER PRIMARY KEY AUTOINCREMENT
+, track_number INTEGER
+, title TEXT
+, writer INTEGER
+, vocal_1 INTEGER
+, vocal_2 INTEGER
+, vocal_3 INTEGER
+, length_seconds INTEGER);
+
+INSERT INTO rumours (track_number, title, writer, vocal_1, vocal_2, vocal_3, length_seconds)
+VALUES
+  (1, "Second Hand News", 1, 1, NULL, NULL, 163)
+, (2, "Dreams", 5, 5, NULL, NULL, 254)
+, (3, "Never Going Back Again", 1, 1, NULL, NULL, 122)
+, (4, "Don't Stop", 3, 3, 1, NULL, 191)
+, (5, "Go Your Own Way", 1, 1, NULL, NULL, 218)
+, (6, "Songbird", 3, 3, NULL, NULL, 200)
+, (7, "The Chain", 1, 1, 5, 3, 268)
+, (7, "The Chain", 2, 1, 5, 3, 268)
+, (7, "The Chain", 3, 1, 5, 3, 268)
+, (7, "The Chain", 4, 1, 5, 3, 268)
+, (7, "The Chain", 5, 1, 5, 3, 268)
+, (8, "You Make Loving Fun", 3, 3, NULL, NULL, 211)
+, (9, "I Don't Want to Know", 5, 5, 1, NULL, 191)
+, (10, "Oh Daddy", 3, 3, NULL, NULL, 234)
+, (11, "Gold Dust Woman", 5, 5, NULL, NULL, 291)
+;
+
+-- List of Fleetwood Mac relationships
+CREATE TABLE partners 
+( id INTEGER PRIMARY KEY AUTOINCREMENT
+	, woman INTEGER
+	, man INTEGER);
+
+INSERT INTO partners (woman, man) VALUES
+  (5, 1)
+, (3, 4)
+, (5, 2)
+;
+
+-- Order the tracks by length, descending [DISTINCT, ORDER BY]
+SELECT DISTINCT
+track_number
+, title
+, length_seconds
+FROM rumours
+ORDER BY length_seconds DESC
+;
+
+-- What is the longest song on Rumours? [MAX]
+
+SELECT 
+title
+, MAX(length_seconds)
+FROM rumours
+;
+
+-- Who wrote the longest song on Rumours? [JOIN]
+SELECT 
+first_name
+, last_name
+, title
+, MAX(length_seconds)
+FROM fm_77
+	JOIN rumours
+	ON fm_77.id = rumours.writer
+;
+
+-- Who wrote what (not counting "The Chain") [JOIN, WHERE, GROUP BY]
+SELECT
+title
+, first_name
+, last_name
+, length_seconds
+FROM rumours
+    JOIN fm_77
+    ON rumours.writer = fm_77.id
+WHERE title <> "The Chain"
+GROUP BY title
+;
+
+-- How many songs did each person write? [COUNT, JOIN, GROUP BY, ORDER BY]
+SELECT
+first_name
+, last_name
+, COUNT(title)
+FROM fm_77
+    JOIN rumours
+    ON fm_77.id = rumours.writer
+    GROUP BY writer
+    ORDER BY COUNT(title) DESC
+;
+
+-- Show the sum of track_length, grouped by writer, having more than 300 seconds [JOIN, SUM, HAVING]
+-- ( a way to practice having and get rid of "The Chain")
+SELECT
+first_name
+, last_name
+, COUNT(writer) AS songs_written
+, SUM(length_seconds) AS sum_songs_length_seconds
+FROM fm_77
+    JOIN rumours
+    ON fm_77.id = rumours.writer
+GROUP BY writer
+HAVING SUM(length_seconds)> 300
+ORDER BY SUM(length_seconds) DESC
+;
+
+-- Show the average of track_length, grouped by writer [JOIN, AVG, HAVING]
+
+SELECT
+first_name
+, last_name
+, COUNT(writer)
+, ROUND(AVG(length_seconds),0) AS rounded_avg_length
+FROM fm_77
+	JOIN rumours
+	ON fm_77.id = rumours.writer
+WHERE writer <> 6
+GROUP BY writer
+ORDER BY AVG(length_seconds) DESC
+;
+
+-- Display track_length, grouped by writer's nationality, grouped by country [SUM, JOIN, GROUP BY, ORDER BY]
+
+SELECT
+nationality
+, SUM(length_seconds) AS sum_track_length
+FROM fm_77
+    JOIN rumours
+    ON fm_77.id = rumours.writer
+GROUP BY nationality
+ORDER BY sum_track_length DESC
+;
+
+
+-- Which members dated each other? [SELF JOIN]
+SELECT
+a.first_name
+, a.last_name
+, b.first_name
+, b.last_name
+FROM partners
+    JOIN fm_77 a
+    ON partners.woman = a.id
+    JOIN fm_77 b
+    ON partners.man = b.id
+;
+
