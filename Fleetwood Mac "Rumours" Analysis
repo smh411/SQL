@@ -10,7 +10,6 @@ CREATE TABLE fm_77
 
 INSERT INTO fm_77 
 VALUES
-
   (1, "Lindsey", "Buckingham", "US")
 , (2, "Mick", "Fleetwood", "UK")
 , (3, "Christine", "McVie", "UK")
@@ -88,7 +87,7 @@ FROM fm_77
 	ON fm_77.id = rumours.writer
 ;
 
--- Who wrote what (not counting "The Chain") [JOIN, WHERE, GROUP BY]
+-- Who wrote what (not counting "The Chain", which has all members as a writer) [JOIN, WHERE, GROUP BY]
 SELECT
 title
 , first_name
@@ -114,7 +113,7 @@ FROM fm_77
 ;
 
 -- Show the sum of track_length, grouped by writer, having more than 300 seconds [JOIN, SUM, HAVING]
--- ( a way to practice having and get rid of "The Chain")
+-- ( a way to practice HAVING and get rid of "The Chain")
 SELECT
 first_name
 , last_name
