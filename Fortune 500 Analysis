@@ -1,4 +1,4 @@
-#This project utilizes the following Fortune 500 data: 
+--This project utilizes the following Fortune 500 data: 
 
 CREATE TABLE fortune_companies (
     company_id INTEGER PRIMARY KEY,
@@ -57,3 +57,94 @@ VALUES
     ('Company II', 'Telecommunications', 110.5, 2000, 1, 21, 12, 4.9),
     ('Company JJ', 'Manufacturing', 370.0, 3100, 1, 20, 12, 7.6),
     ('Company KK', 'Healthcare', 150.2, 3400, 0, 16, 8, 5.3);
+
+--1. How many companies and distinct industries are in the list?
+SELECT COUNT(company_id) AS company
+, COUNT(DISTINCT industry) AS industry
+FROM fortune_companies
+;
+
+--2.  How many companies are in each industry?
+SELECT industry
+, COUNT(company_name) AS companies
+FROM fortune_companies
+GROUP BY industry
+ORDER BY companies DESC
+; 
+
+--3.  Calculate average revenue by industry, round to two decimal points
+SELECT industry
+, ROUND(AVG(revenue), 2) AS avg_revenue
+FROM fortune_companies
+	GROUP BY industry
+ORDER BY avg_revenue DESC
+;
+
+--4. Calculate average revenue for industries where the average is greater than or equal to 200
+SELECT industry
+, ROUND(AVG(revenue)) AS round_avg_revenue
+FROM fortune_companies
+	GROUP BY industry
+	HAVING round_avg_revenue >= 200
+ORDER BY round_avg_revenue DESC
+;
+
+--5. Which company offers the most amount of paid time off?
+SELECT company_name
+, MAX(paid_time_off_days)
+FROM fortune_companies
+;
+
+--6. How many companies offer maternity leave?
+SELECT COUNT(company_id)
+FROM fortune_companies
+WHERE maternity_leave_weeks >=1
+;
+
+--7. Which companies offer maternity leave?
+SELECT *
+FROM fortune_companies
+WHERE maternity_leave_weeks >=1
+;
+
+--8. Display the number of companies by the number of maternity leave weeks
+SELECT COUNT(company_name)
+, CASE
+WHEN maternity_leave_weeks >= 20 THEN "20+ weeks"
+WHEN maternity_leave_weeks = 18 THEN "18-19 weeks"
+WHEN maternity_leave_weeks > 16 THEN "16-17 weeks"
+WHEN maternity_leave_weeks > 14 THEN "14-15 weeks"
+WHEN maternity_leave_weeks > 12 THEN "5-9 weeks"
+WHEN maternity_leave_weeks > 10 THEN "10-11 weeks"
+WHEN maternity_leave_weeks > 0 THEN "1-9 weeks"
+ELSE "no maternity leave"
+END AS "maternity_leave"
+FROM fortune_companies
+GROUP BY maternity_leave
+ORDER BY COUNT(company_name) DESC
+;
+
+--9. Display companies by the number of maternity leave weeks
+SELECT company_name
+, CASE
+WHEN maternity_leave_weeks >= 30 THEN "30+ weeks"
+WHEN maternity_leave_weeks >= 25 THEN "25-29 weeks"
+WHEN maternity_leave_weeks = 20 THEN "20-24 weeks"
+WHEN maternity_leave_weeks > 15 THEN "15-19 weeks"
+WHEN maternity_leave_weeks > 10 THEN "10-14 weeks"
+WHEN maternity_leave_weeks > 5 THEN "5-9 weeks"
+ELSE "no maternity leave"
+END AS "maternity_leave"
+FROM fortune_companies
+;
+
+--10. Display companies that have at least 12 weeks of maternity leave AND 14 days paid time off, sort by maternity leave (desc)
+SELECT company_name
+, maternity_leave_weeks
+, paid_time_off_days
+FROM fortune_companies
+WHERE maternity_leave_weeks > 12 
+AND paid_time_off_days > 14
+ORDER BY maternity_leave_weeks DESC
+;
+
