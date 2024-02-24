@@ -1,5 +1,5 @@
-# This project reveals insights about Fleetwood Mac, their 1977 album Rumours, and their inter-band relationships.
-# The project required creating and analyzing tables.
+-- This project reveals insights about Fleetwood Mac, their 1977 album Rumours, and their inter-band relationships.
+-- The project required creating and analyzing datasets.
 
 --Fleetwood Mac members on Rumours
 CREATE TABLE fm_77
@@ -60,10 +60,10 @@ INSERT INTO partners (woman, man) VALUES
 , (5, 2)
 ;
 
-# The following SQL was written to answer specific questions about relationships between Fleetwood Mac members and the album Rumours:
 
+-- The following SQL was written to answer specific questions about relationships between Fleetwood Mac members and the album Rumours:
 
-#1. Order the tracks by length, descending [DISTINCT, ORDER BY]
+--1. Order the tracks by length, descending [DISTINCT, ORDER BY]
 SELECT DISTINCT
 track_number
 , title
@@ -72,7 +72,7 @@ FROM rumours
 ORDER BY length_seconds DESC
 ;
 
-#2. What is the longest song on Rumours? [MAX]
+--2. What is the longest song on Rumours? [MAX]
 
 SELECT 
 title
@@ -80,7 +80,7 @@ title
 FROM rumours
 ;
 
-#3. Who wrote the longest song on Rumours? [JOIN]
+--3. Who wrote the longest song on Rumours? [JOIN]
 SELECT 
 first_name
 , last_name
@@ -91,7 +91,7 @@ FROM fm_77
 	ON fm_77.id = rumours.writer
 ;
 
-#4. Who wrote what (not counting "The Chain", which has all members as a writer) [JOIN, WHERE, GROUP BY]
+--4. Who wrote what (not counting "The Chain", which has all members as a writer) [JOIN, WHERE, GROUP BY]
 SELECT
 title
 , first_name
@@ -104,7 +104,7 @@ WHERE title <> "The Chain"
 GROUP BY title
 ;
 
-#5. How many songs did each person write? [COUNT, JOIN, GROUP BY, ORDER BY]
+--5. How many songs did each person write? [COUNT, JOIN, GROUP BY, ORDER BY]
 SELECT
 first_name
 , last_name
@@ -116,7 +116,7 @@ FROM fm_77
     ORDER BY COUNT(title) DESC
 ;
 
-#6. Show the sum of track_length, grouped by writer, having more than 300 seconds [JOIN, SUM, HAVING]
+--6. Show the sum of track_length, grouped by writer, having more than 300 seconds [JOIN, SUM, HAVING]
 -- ( a way to practice HAVING and get rid of "The Chain")
 SELECT
 first_name
@@ -131,7 +131,7 @@ HAVING SUM(length_seconds)> 300
 ORDER BY SUM(length_seconds) DESC
 ;
 
-#7. Show the average of track_length, grouped by writer [JOIN, AVG, HAVING]
+--7. Show the average of track_length, grouped by writer [JOIN, AVG, HAVING]
 
 SELECT
 first_name
@@ -146,7 +146,7 @@ GROUP BY writer
 ORDER BY AVG(length_seconds) DESC
 ;
 
-#8. Display track_length, grouped by writer's nationality, grouped by country [SUM, JOIN, GROUP BY, ORDER BY]
+--8. Display track_length, grouped by writer's nationality, grouped by country [SUM, JOIN, GROUP BY, ORDER BY]
 
 SELECT
 nationality
@@ -159,7 +159,7 @@ ORDER BY sum_track_length DESC
 ;
 
 
-#9. Which members dated each other? [SELF JOIN]
+--9. Which members dated each other? [SELF JOIN]
 SELECT
 a.first_name
 , a.last_name
