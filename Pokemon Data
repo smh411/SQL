@@ -1,4 +1,4 @@
-/** This project utilizes the following Pokemon data **/
+-- This project reveals insights about Pokemon and utilized data from the following dataset:
 
 CREATE TABLE pokemon(
   Number     INTEGER,
@@ -816,80 +816,112 @@ INSERT INTO pokemon(Number,Name,Type_1,Type_2,Total,HP,Attack,Defense,Sp_Atk,Sp_
 INSERT INTO pokemon(Number,Name,Type_1,Type_2,Total,HP,Attack,Defense,Sp_Atk,Sp_Def,Speed,Generation,Legendary) VALUES (720,'HoopaHoopa Unbound','Psychic','Dark',680,80,160,60,170,130,80,6,'True');
 INSERT INTO pokemon(Number,Name,Type_1,Type_2,Total,HP,Attack,Defense,Sp_Atk,Sp_Def,Speed,Generation,Legendary) VALUES (721,'Volcanion','Fire','Water',600,80,110,120,130,90,70,6,'True');
 
-/**count number of fighting types**/
-SELECT COUNT(DISTINCT Type_1) from pokemon;
+-- The following SQL was written to answer specific questions about Pokemon:
 
-/**calculate number of pokemon by 1st fighting type**/
+--1. How many distinct fighting types are there?
+SELECT 
+COUNT(DISTINCT Type_1) 
+FROM pokemon
+;
+
+--2. Calculate number of pokemon by 1st fighting type
 SELECT Type_1 AS Fighting_Type
 , COUNT(Type_1) AS Quantity 
 FROM pokemon
 GROUP BY Type_1;
 
-/**calculate number of pokemon by 1st and 2nd fighting type**/
-SELECT Type_1,COUNT(Type_1)
+--3. How many pokemon are in each fighting type (separating 1st and 2nd fighting type)
+SELECT
+Type_1
+, COUNT(Type_1)
 , Type_2
 , COUNT(Type_2)
 FROM pokemon
-GROUP BY Type_1;
+GROUP BY Type_1
+;
 
-/**count number pokemon with flying as first type**/
-SELECT Number
+--4. How many pokemon have flying as their first fighting type?
+SELECT 
+Number
 , Name
-, Type_1 FROM pokemon
-WHERE Type_1 = "Flying";
+, Type_1 
+FROM pokemon
+WHERE Type_1 = "Flying"
+;
 
-/**count number pokemon with flying as first or second type**/
-SELECT Number
+--5. How many pokemon have flying as their first OR second fighting type?
+SELECT 
+Number
 , Name
 , Type_1
-, Type_2 from pokemon
+, Type_2 
+FROM pokemon
 WHERE Type_1 = "Flying" OR Type_2 = "Flying"
-ORDER BY Number;
+ORDER BY Number
+;
 
-/**select fire type pokemon**/
-SELECT Number
-, Name from pokemon
+--6. Display all pokemon with fire as one of their fighting types
+SELECT 
+Number
+, Name 
+FROM pokemon
 WHERE Type_1 OR Type_2 = "Fire";
 
-/**Who has the highest HP?**/
-SELECT Type_1
-, Name, MAX (HP) 
-FROM pokemon;
-
-/**What are the pokemon with the highest HP from each fighting type?**/
-SELECT Type_1
+--7. Which pokemon has the highest HP?
+SELECT 
+Type_1
 , Name
 , MAX (HP) 
 FROM pokemon
-GROUP BY Type_1;
+;
 
-/**What is the average HP by fighting type 1?, display only those with Average HP > 70**/
-SELECT Type_1
-, AVG(HP) from pokemon
+--8. What are the pokemon with the highest HP from each fighting type?
+SELECT 
+Type_1
+, Name
+, MAX (HP) 
+FROM pokemon
+GROUP BY Type_1
+;
+
+--9. What is the average HP by fighting type 1?, display only those with Average HP > 70
+SELECT 
+Type_1
+, AVG(HP) 
+FROM pokemon
 GROUP BY Type_1
 HAVING AVG(HP) > 70
-ORDER BY HP DESC;
+ORDER BY HP DESC
+;
 
-/**What are the legendary pokemon with the highest HP from each fighting type?**/
-SELECT Type_1
+--10. What are the legendary pokemon with the highest HP from each fighting type?
+SELECT 
+Type_1
 , Name
 , MAX (HP) 
 FROM pokemon
 WHERE legendary = "True"
-GROUP BY Type_1;
+GROUP BY Type_1
+;
 
-/**what's the fastest pokemon?**/
-SELECT Name
+--11. What's the fastest pokemon?
+SELECT 
+Name
 , MAX(Speed)
-from pokemon;
+from pokemon
+;
 
-/**what's the fastest pokemon in each fighting type?**/
-SELECT Name
-, MAX(Speed) from pokemon
-GROUP BY Type_1;
+--12. What's the fastest pokemon in each fighting type?
+SELECT 
+Name
+, MAX(Speed)
+FROM pokemon
+GROUP BY Type_1
+;
 
-/**What are the fastest pokemon within HP groups**/
-SELECT Name
+--13. What are the fastest pokemon, grouped by HP [CASE]
+SELECT 
+Name
 , MAX(Speed)
 , HP
 ,
@@ -902,7 +934,8 @@ ELSE "poor"
 END AS HP_level
 FROM pokemon
 GROUP BY HP_level
-ORDER BY MAX(Speed) DESC;
+ORDER BY MAX(Speed) DESC
+;
 
 
 
