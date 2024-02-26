@@ -1,0 +1,14 @@
+-- This project involves the creation of a database of top wines from 2023. 
+-- Tools / Skills: Excel, SQL, ChatGPT 3.5
+
+/**
+Step 1. Find a source listing at least 50 wines from different parts of the world. Ideally source includes many variables for columns, such as tasting notes. 
+  https://top100.winespectator.com/lists/
+Step 2. Convert the wine list into an Excel spreadsheet
+  - copy and paste into Word to clean up data do mass replacements of unneeded symbols, 
+  - add commas to break up multi-column information (e.g., "Résonance Pinot Noir Willamette Valley" to "Résonance, Pinot Noir, Willamette Valley" (name, varietal, location)
+  - research unknown regions to add country name
+  - research unknown wines to assign type (red, white, rosé, sparkling)
+Step 3. 
+
+**/
