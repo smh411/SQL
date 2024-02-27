@@ -5,7 +5,18 @@
 Step 1. Find a source listing at least 50 wines from different parts of the world. Ideally source includes many variables for columns, such as tasting notes. 
   https://top100.winespectator.com/lists/
 Step 2. Convert the wine list into an Excel spreadsheet
+
+
+
   - copy and paste into Word to clean up data do mass replacements of unneeded symbols, 
+  - use ChatGPT to break up descriptions into columns (e.g., 
+    PROMPT: Create a spreadsheet from the following data.  include the wine number (#), name, description, varietal (if applicable), type (red, white, rosé, sparkling, dessert), if applicable,  recommended drink-through period, cases made, cases imported (if applicable), and reviewer initials.
+INPUT: "Occidental Pinot Noir West Sonoma Coast Freestone-Occidental - Boasts blackberry and plum fruit enlivened by a light savory thread, while anise and iris notes add range through the sleek, tangy finish. Shows a nice underlying mineral edge, which adds subtle tension throughout. Refined. Drink now through 2030. 4,000 cases made. —JM"
+  OUTPUT: 
+
+
+
+
   - add commas to break up multi-column information (e.g., "Résonance Pinot Noir Willamette Valley" to "Résonance, Pinot Noir, Willamette Valley" (name, varietal, location)
   - research unknown regions to add country name
   - research unknown wines to assign type (red, white, rosé, sparkling)
