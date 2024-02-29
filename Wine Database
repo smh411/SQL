@@ -1,25 +1,32 @@
--- This project involves the creation of a database of top wines from 2023. 
--- Tools / Skills: Excel, SQL, ChatGPT 3.5
+-- This project involves the creation of a database of top Californian wines. 
+-- Tools / Skills: SQL, SQLite Studio, Excel, ChatGPT 3.5
 
 /**
-Step 1. Find a source listing at least 50 wines from different parts of the world. Ideally source includes many variables for columns, such as tasting notes. 
-  https://top100.winespectator.com/lists/
-Step 2. Convert the wine list into an Excel spreadsheet
+Step 1. Find a data source for wine 
+  => Wine Spectator magazine (aka WS): winespectator.com
+Step 2. Select data
+  => Using the search function on WS, I selected wines: 
+      a) from California 
+      b) honored in a Top-100 list from the past 11 years (2013-2023). 
+  => result: 229 entries
+Step 3. Clean data
+  - 4 entries did not include Top 100 rankings => result = 225 entries 
+  - edit data in Word to enable import and text-to-column in excel
+  - separate data into columns for comma separated values
+  - use ChatGPT to break up the wine description into columns (not comma separated values)
+PROMPT: Create a table from the following data.  include the wine number id, name, description, varietal, type (red, white, rosé, sparkling, dessert), if applicable,  recommended drink-through period, cases made, cases imported (if applicable), and reviewer initials. make a row for each of the 50 entries.
+Create a table from the following data.  Include the id number, name, description, varietal, type (red, white, rosé, sparkling, dessert), reviewer initials, recommended drink-through period, and cases made. Make a row for each of the entries. some of the columns will not have data for that row. 
+Example INPUT: 1	DAOU Cabernet Sauvignon Adelaida District Estate 2014	Combines rich, deep flavors with a measure of finesse and refinement, allowing the earth-laced red berry and spicy herb notes to shine. Ripe, sturdy tannins lend this structure and traction. Best from 2020 through 2034. 1,000 cases made. –JL
+OUTPUT: 
+| ID | Name | Description | Varietal | Type | Reviewer Initials | Recommended Drink-Through Period | Cases Made |
+|----|------|-------------|----------|------|-------------------|----------------------------------|------------|
+| 1  | DAOU Cabernet Sauvignon Adelaida District Estate 2014 | Combines rich, deep flavors with a measure of finesse and refinement, allowing the earth-laced red berry and spicy herb notes to shine. Ripe, sturdy tannins lend this structure and traction. Best from 2020 through 2034. 1,000 cases made. –JL | Cabernet Sauvignon | Red | JL | 2020-2034 | 1,000 |
 
+Step 4. Create csv spreadsheets and import them into SQLite Studio
+table_name: column1, column2, etc.
+wines: id,	name,	vintage,	winery,	region,	color,	sparkling,	type,	blend_varietals,	primary_grape,	cases_made,	release_price
+ratings: wine_id, review,	score,	top_100_year,	rank,	reviewer_id,	ws_designation,	review_date,	release_price,	recommended_drink	
+reviewers: reviewer_id,	initials,	name,	position,	location,	tasting_beat,	notes
 
-
-  - copy and paste into Word to clean up data do mass replacements of unneeded symbols, 
-  - use ChatGPT to break up descriptions into columns (e.g., 
-    PROMPT: Create a spreadsheet from the following data.  include the wine number (#), name, description, varietal (if applicable), type (red, white, rosé, sparkling, dessert), if applicable,  recommended drink-through period, cases made, cases imported (if applicable), and reviewer initials.
-INPUT: "Occidental Pinot Noir West Sonoma Coast Freestone-Occidental - Boasts blackberry and plum fruit enlivened by a light savory thread, while anise and iris notes add range through the sleek, tangy finish. Shows a nice underlying mineral edge, which adds subtle tension throughout. Refined. Drink now through 2030. 4,000 cases made. —JM"
-  OUTPUT: 
-
-
-
-
-  - add commas to break up multi-column information (e.g., "Résonance Pinot Noir Willamette Valley" to "Résonance, Pinot Noir, Willamette Valley" (name, varietal, location)
-  - research unknown regions to add country name
-  - research unknown wines to assign type (red, white, rosé, sparkling)
-Step 3. 
 
 **/
