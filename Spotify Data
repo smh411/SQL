@@ -1,0 +1,82 @@
+-- The following SQL is used to analyze a database of song info from Spotify. 
+
+--1.  Display artist and track that have a popularity score of 90 or more.
+ 
+SELECT 
+  artist_name AS artist
+, track_name AS track
+FROM Spotifydata
+WHERE popularity >= 90
+;
+
+--2.  What is the average danceability by artist and track? 
+SELECT
+artist_name
+, ROUND(AVG(danceability),2) AS avg_danceability
+FROM Spotifydata
+GROUP BY artist_name
+;
+
+--3. Which artists appear more than once on this list, and how many times do they appear?
+SELECT
+artist_name
+, COUNT (track_name)
+FROM Spotifydata
+GROUP BY artist_name
+HAVING COUNT(track_name) >1
+ORDER BY COUNT(track_name) DESC
+;
+
+--4. Which songs are not in 4/4 time signature, and what time signature are they in?
+SELECT 
+artist_name
+, track_name
+, time_signature
+FROM Spotifydata
+WHERE time_signature <> 4
+;
+
+--5. Who are the top 10 artists based on popularity? 
+
+SELECT
+artist_name
+, AVG(popularity) AS avg_popularity
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY avg_popularity DESC
+LIMIT 10
+;
+
+--6. How many songs by each artist, and what is the average popularity?
+
+SELECT
+artist_name
+, COUNT (track_name) as count_tracks
+, ROUND(AVG(popularity), 2) AS avg_popularity
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY count_tracks DESC
+;
+
+
+--7. What is the longest song? 
+
+SELECT 
+track_name
+, (duration_ms / 1000) AS duration_seconds
+FROM Spotifydata
+ORDER BY duration_ms DESC
+LIMIT 1
+;
+
+
+--8. What's the highest average danceability, grouped by artist?
+
+SELECT
+artist_name
+, AVG(danceability) AS avg_danceability
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY avg_danceability DESC
+LIMIT 10
+;
