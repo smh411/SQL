@@ -30,3 +30,468 @@ reviewers: reviewer_id,	initials,	name,	position,	location,	tasting_beat,	notes
 
 
 **/
+
+Queries
+-- SECTION 1: Type
+
+-- 1.1 Display the number of red and white wines by year
+
+SELECT
+year
+, COUNT(CASE WHEN color = 'red' THEN 1 END) AS red_wine_count
+, COUNT(CASE WHEN color = 'white' THEN 1 END) AS white_wine_count
+, COUNT(CASE WHEN color LIKE '%rosé%' THEN 1 END) AS rose_wine_count
+, COUNT(*) AS total_wine_count
+, ROUND((COUNT(CASE WHEN color = 'red' THEN 1 END) * 100.0 / COUNT(*)),2) AS red_wine_percentage
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY year
+;
+
+-- 1.2 Display the number of wines by listed type
+
+SELECT
+type
+,COUNT(type) AS count_type
+FROM wines
+GROUP BY type
+ORDER BY COUNT(type) DESC
+;
+
+
+-- 1.3 Display the number of wines by primary grape
+
+SELECT
+primary_grape
+, COUNT(primary_grape) AS count
+, COUNT(CASE WHEN color = 'red' THEN 1 END) AS red_wine_count
+, COUNT(CASE WHEN color = 'white' THEN 1 END) AS white_wine_count
+, COUNT(CASE WHEN color LIKE '%rosé%' THEN 1 END) AS rose_wine_count
+FROM wines
+WHERE primary_grape IS NOT NULL
+GROUP BY primary_grape
+ORDER BY COUNT(id) DESC
+;
+
+
+-- 1.4 Most common primary grape in red blends?
+
+SELECT
+primary_grape
+, COUNT(primary_grape) AS count
+FROM wines
+WHERE type = 'red blend'
+GROUP BY primary_grape
+ORDER BY count DESC
+;
+
+-- 1.5 Most common primary grape in white blends?
+
+SELECT
+primary_grape
+, COUNT(primary_grape) AS count
+FROM wines 
+WHERE type = 'white blend'
+GROUP BY primary_grape
+ORDER BY count DESC
+;
+
+-- 1.6 Display the number of wines by secondary type (still or sparkling?)
+
+SELECT
+year
+, COUNT(CASE WHEN still_sparkling = 'still' THEN 1 END) AS still_wine_count
+, COUNT(CASE WHEN still_sparkling = 'sparkling' THEN 1 END) AS sparkling_wine_count
+, COUNT(*) AS total_wine_count
+, ROUND((COUNT(CASE WHEN still_sparkling = 'sparkling' THEN 1 END) * 100.0 / COUNT(*)),2) AS sparkling_wine_percentage
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY year
+;
+
+
+
+-- SECTION 2: Region
+
+-- 2.1 Which wineries have had 3 or more wines on the list, and what types? Where are they located? Order by wines, descending.
+
+    SELECT
+    winery
+    , COUNT(winery) AS total_wines
+, COUNT(CASE WHEN color = 'red' THEN 1 END) AS reds
+, COUNT(CASE WHEN color = 'white' THEN 1 END) AS whites
+, COUNT(CASE WHEN color LIKE 'ro%' THEN 1 END) AS roses
+    , region
+    , ava
+    FROM wines
+    GROUP BY winery
+    HAVING total_wines >=3
+    ORDER BY COUNT(name) DESC, name
+    ;
+
+--2.2 Display the breakdown of red, white, and rosé wines by region
+
+SELECT
+region
+, COUNT(id) as total
+, COUNT(CASE WHEN color = 'red' THEN 1 END) AS reds
+, COUNT (CASE WHEN color = 'white' THEN 1 END) AS whites
+, COUNT (CASE WHEN color LIKE 'ro%' THEN 1 END) AS roses
+FROM wines
+GROUP BY region
+;
+
+
+-- 2.3 Display the number of Top-100 wines for each region by AVA, sort by highest count.
+SELECT
+ava
+, region
+, COUNT(name) AS count
+FROM wines
+WHERE ava IS NOT NULL
+GROUP BY ava
+ORDER BY count DESC
+;
+
+
+-- 2.4 Which CA AVAs have produced more than 1  award-winning Cabernet Sauvignon?
+
+SELECT
+ava
+, region
+, COUNT(name) AS count
+FROM wines
+WHERE type = 'cabernet sauvignon'
+AND ava IS NOT NULL
+GROUP BY ava
+HAVING count > 1
+ORDER BY count DESC
+;
+
+
+-- 2.5 Display Napa AVAs by how many Top-100 wines they’ve produced from 2013-2023.
+SELECT
+ava
+, COUNT(name) AS count
+FROM wines
+WHERE region = 'napa valley'
+AND ava IS NOT NULL
+GROUP BY region, ava
+ORDER BY count DESC
+;
+
+
+
+
+-- SECTION 3. Pricing
+
+--3.1 What are the maximum, minimum, and average prices each year?
+
+SELECT
+year
+, MIN(price) AS minimum_price
+, MAX(price) AS maximum_price
+, ROUND(AVG(price),2) AS avg_price
+FROM wines
+    JOIN ratings 
+    ON wines.id = ratings.wine_id
+GROUP BY year
+;
+
+-- 3.2 What are the maximum, minimum, and average prices by wine type (for types with more than one list appearance)? Order by average price, descending.
+
+SELECT
+type
+, MIN(price) as Minimum_price
+, MAX(price) as Maximum_price
+, ROUND(AVG(price),2) AS Average_price
+, COUNT (name) AS wine_count
+FROM wines
+    JOIN ratings 
+    ON wines.id = ratings.wine_id
+GROUP BY type
+HAVING wine_count > 1
+ORDER BY Average_price DESC
+;
+
+-- 3.3 What are the maximum, minimum, and average prices by region (for regions with more than one list appearance)? Order by Average_price, descending.
+
+SELECT
+region
+, MIN(price) as Minimum_price
+, MAX(price) as Maximum_price
+, ROUND(AVG(price),2) AS Average_price
+, COUNT (name) AS wines
+FROM wines
+    JOIN ratings 
+    ON wines.id = ratings.wine_id
+GROUP BY region
+HAVING wines > 1
+ORDER BY Average_price DESC
+;
+
+
+-- 3.4 What are the maximum, minimum, and average prices by AVA (for AVAs with more than one list appearance)? Order by Average_price, descending.
+
+SELECT
+ava
+, region
+, MIN(price) as Minimum_price
+, MAX(price) as Maximum_price
+, ROUND(AVG(price),2) AS Average_price
+, COUNT (name) AS wines
+FROM wines
+    JOIN ratings 
+    ON wines.id = ratings.wine_id
+GROUP BY ava
+HAVING wines > 1
+ORDER BY Average_price DESC
+;
+
+-- 3.5 What are the most expensive reds by top 100 year and where are they from? 
+
+SELECT
+ year
+, name
+, MAX(price) as max_price
+, region
+, ava
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY year
+;
+ 
+
+-- SECTION 4: Score-Price Ratio
+
+
+-- 4.1 What is the highest rated wine by price point? Order highest to lowest by score.
+
+SELECT
+name
+, score
+, type
+, CASE
+WHEN price >200 THEN "$200+"
+WHEN price > 150 THEN "$150-200"
+WHEN price > 100 THEN "$100-150"
+WHEN price > 50 THEN "$50-100"
+ELSE "$50 or less" 
+END AS price_range
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+GROUP BY price_range
+ORDER BY score DESC 
+;
+
+
+-- 4.2 What are the 10 best value red wines by year, where value is score divided by price. Rank by highest to lowest value 
+
+SELECT
+year
+, name
+, score
+, price
+, MAX(ROUND((CAST(score AS REAL)) / ((CAST(price AS REAL))),2)) AS value
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+WHERE color = "red"
+GROUP BY year
+ORDER BY value DESC
+;
+
+-- 4.3 What are the best value white wines by year, where value is score divided by price. Rank by highest to lowest value 
+
+SELECT
+year
+, name
+, score
+, price
+, MAX(ROUND((CAST(score AS REAL)) / ((CAST(price AS REAL))),2)) AS value
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+WHERE color = "white"
+GROUP BY year
+ORDER BY value DESC
+;
+
+-- 4.4 What are the top 10 best value wines from Napa Valley, where value is score divided by price. Rank by highest to lowest value. 
+
+SELECT
+name
+, score
+, price
+, ROUND((CAST(score AS REAL)) / ((CAST(price AS REAL))),2) AS value
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+WHERE region = "napa valley"
+ORDER BY value DESC
+LIMIT 10
+;
+
+-- 4.5 What are the top 10 best value Pinot Noirs? 
+
+SELECT
+name
+, score
+, price
+, ROUND((CAST(score AS REAL)) / ((CAST(price AS REAL))),2) AS value
+FROM ratings
+    JOIN wines
+    ON ratings.wine_id = wines.id
+WHERE type = "pinot noir"
+ORDER BY value DESC
+LIMIT 10
+;
+
+-- SECTION 5: Reviews
+
+-- 5.1 Display information on reviews
+
+SELECT
+initials
+, reviewer_name
+, position
+, tasting_beat
+ FROM reviewers;
+
+-- 5.2 How many wines did each reviewer review?
+
+SELECT 
+reviewer_name
+, COUNT (score) AS total_reviews
+FROM reviewers
+    JOIN ratings
+    ON reviewers.reviewer_id = ratings.reviewer_id
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY reviewer_name
+;
+
+-- 5.3 What's the average for reviewers by color?
+
+SELECT 
+reviewer_name
+, COUNT (score) AS total_reviews
+, COUNT(CASE WHEN color = 'red' THEN 1 END) AS red_wine_reviews
+, ROUND(AVG(CASE WHEN color = 'red' THEN score END), 2) AS avg_red_wine_score
+, COUNT(CASE WHEN color = 'white' THEN 1 END) AS white_wine_reviews
+, ROUND(AVG(CASE WHEN color = 'white' THEN score END), 2) AS avg_white_wine_score
+FROM reviewers
+    JOIN ratings
+    ON reviewers.reviewer_id = ratings.reviewer_id
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY reviewer_name
+;
+
+-- 5.4 What's the average for reviewers by still or sparkling?
+
+SELECT 
+reviewer_name
+, COUNT (score) AS total_reviews
+, COUNT(CASE WHEN still_sparkling = 'still' THEN 1 END) AS still_wine_reviews
+, ROUND(AVG(CASE WHEN still_sparkling = 'still' THEN score END), 2) AS avg_still_wine_score
+, COUNT(CASE WHEN still_sparkling = 'sparkling' THEN 1 END) AS sparkling_wine_reviews
+, ROUND(AVG(CASE WHEN still_sparkling = 'sparkling' THEN score END), 2) AS avg_sparkling_wine_score
+FROM reviewers
+    JOIN ratings
+    ON reviewers.reviewer_id = ratings.reviewer_id
+    JOIN wines
+    ON ratings.wine_id = wines.id
+GROUP BY reviewer_name
+;
+
+
+-- Section 6
+
+-- 6.1 Show regions associated with peppery reds
+
+SELECT
+region
+, COUNT(CASE WHEN review LIKE '%pepper%' THEN 1 END) AS total
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+GROUP BY region
+HAVING total > 0
+ORDER BY total DESC
+;
+
+-- 6.2 Show Sonoma AVAs associated with peppery reds
+
+SELECT
+region
+, ava
+, COUNT(CASE WHEN review LIKE '%pepper%' THEN 1 END) AS total
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+WHERE region = 'sonoma'
+GROUP BY ava
+HAVING total >0
+ORDER BY total DESC
+;
+
+-- 6.3 Show reds associated with 'pepper', under 50 USD
+
+SELECT 
+name
+, region
+, price
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+WHERE review LIKE '%pepper%'
+AND color = 'red'
+AND price <= 50
+ORDER BY region, price
+;
+
+-- 6.4 Show sparkling wines, ordered by score and then price
+
+SELECT
+name
+, score
+, region
+, price
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+WHERE still_sparkling = 'sparkling'
+ORDER BY score DESC, price
+;
+
+-- 6.5 Show whites associated with minerality
+SELECT 
+name
+, region
+, price
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+    WHERE color = 'white' AND
+    review LIKE '%minerality%'
+    ORDER BY region, price
+;
+
+-- 6.6 Display wines that ranked within the top 50, under $50
+
+SELECT
+name
+, price
+, rank
+, year AS year_reviewed
+FROM wines
+    JOIN ratings
+    ON wines.id = ratings.wine_id
+WHERE price <=30
+AND rank <=50
+;
