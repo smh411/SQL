@@ -83,7 +83,7 @@ DATASET - conference_db from howtobreakintotech.com
 -----
 
   CREATE TABLE vips (
-     member_id INTEGER
+     member_id INTEGER PRIMARY KEY
    , last_name TEXT
    , first_name TEXT
    , event INTEGER
@@ -101,13 +101,13 @@ CREATE TABLE reservations (
   );
  
 CREATE TABLE events (
-    event_id INTEGER
+    event_id INTEGER PRIMARY KEY
   , event_name TEXT
   , event_type TEXT
   );
   
 CREATE TABLE hotels (
-    hotel_id INTEGER
+    hotel_id INTEGER PRIMARY KEY
   , hotel_name TEXT
   , address TEXT
   );
